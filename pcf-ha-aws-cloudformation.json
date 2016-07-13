@@ -125,11 +125,6 @@
       "Type": "String",
       "Default": "10.0.1.192/26",
       "Description": "Enter a CIDR subnet for RDS Subnet 3 (private)"
-    },
-    "113SingletonCidr": {
-      "Type": "String",
-      "Default": "10.0.2.0/23",
-      "Description": "Enter a CIDR subnet for the Singleton Subnet (NAT-ed)"
     }
   },
   "Resources": {
@@ -481,36 +476,6 @@
           "Key": "Name",
           "Value": {
             "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "apps-AZ-3" ] ]
-          }
-        }]
-      }
-    },
-    "SingletonSubnet": {
-      "Type": "AWS::EC2::Subnet",
-      "Properties": {
-        "CidrBlock": {
-          "Ref": "113SingletonCidr"
-        },
-        "AvailabilityZone": {
-          "Fn::Select": ["0", {
-            "Fn::GetAZs": {
-              "Ref": "AWS::Region"
-            }
-          }]
-        },
-        "VpcId": {
-          "Fn::If": [
-            "CreateVpc", {
-              "Ref": "PcfVpc"
-            }, {
-              "Ref": "00VpcId"
-            }
-          ]
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": {
-            "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "singleton-AZ-1" ] ]
           }
         }]
       }
@@ -1124,18 +1089,6 @@
         }
       }
     },
-    "SingletonRouteEntry": {
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "DependsOn": "ngw1",
-      "Properties": {
-        "RouteTableId": {
-          "Ref": "AppsRouteTable1"
-        },
-        "SubnetId": {
-          "Ref": "SingletonSubnet"
-        }
-      }
-    },
     "AppsRouteEntry1": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "DependsOn": "ngw1",
@@ -1400,6 +1353,7 @@
       "Condition": "CreateRDS",
       "Properties": {
         "AllocatedStorage": "100",
+        "BackupRetentionPeriod" : "0",
         "DBInstanceClass": "db.m3.large",
         "Engine": "MySQL",
         "EngineVersion": "5.6.22",
@@ -1469,21 +1423,6 @@
     "SshElbName": {
       "Value": {
         "Ref": "SshElb"
-      }
-    },
-    "SingletonSubnetId": {
-      "Value": {
-        "Ref": "SingletonSubnet"
-      }
-    },
-    "SingletonSubnetAZ": {
-      "Value": {
-        "Fn::GetAtt": ["SingletonSubnet", "AvailabilityZone"]
-      }
-    },
-    "SingletonSubnetCidr": {
-      "Value": {
-        "Ref": "113SingletonCidr"
       }
     },
     "AppsSubnet1Id": {
