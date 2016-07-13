@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "PCF HA deployment topology",
   "Metadata": {
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "Conditions": {
     "CreateIgw": {
@@ -125,6 +125,11 @@
       "Type": "String",
       "Default": "10.0.1.192/26",
       "Description": "Enter a CIDR subnet for RDS Subnet 3 (private)"
+    },
+    "113SingletonCidr": {
+      "Type": "String",
+      "Default": "10.0.2.0/23",
+      "Description": "Enter a CIDR subnet for the Singleton Subnet (private)"
     }
   },
   "Resources": {
@@ -480,6 +485,36 @@
         }]
       }
     },
+    "SingletonSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "113SingletonCidr"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": ["0", {
+            "Fn::GetAZs": {
+              "Ref": "AWS::Region"
+            }
+          }]
+        },
+        "VpcId": {
+          "Fn::If": [
+            "CreateVpc", {
+              "Ref": "PcfVpc"
+            }, {
+              "Ref": "00VpcId"
+            }
+          ]
+        },
+        "Tags": [{
+          "Key": "Name",
+          "Value": {
+            "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "singleton-AZ-1" ] ]
+          }
+        }]
+      }
+    },
     "SvcsSubnet1": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
@@ -737,7 +772,7 @@
         }]
       }
     },
-    "InternalRouteTable": {
+    "PrivateRouteTable": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
         "VpcId": {
@@ -1025,7 +1060,7 @@
       "Condition": "CreateRDS",
       "Properties": {
         "RouteTableId": {
-          "Ref": "InternalRouteTable"
+          "Ref": "PrivateRouteTable"
         },
         "SubnetId": {
           "Ref": "RdsSubnet1"
@@ -1037,7 +1072,7 @@
       "Condition": "CreateRDS",
       "Properties": {
         "RouteTableId": {
-          "Ref": "InternalRouteTable"
+          "Ref": "PrivateRouteTable"
         },
         "SubnetId": {
           "Ref": "RdsSubnet2"
@@ -1049,7 +1084,7 @@
       "Condition": "CreateRDS",
       "Properties": {
         "RouteTableId": {
-          "Ref": "InternalRouteTable"
+          "Ref": "PrivateRouteTable"
         },
         "SubnetId": {
           "Ref": "RdsSubnet3"
@@ -1060,7 +1095,7 @@
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "RouteTableId": {
-          "Ref": "InternalRouteTable"
+          "Ref": "PrivateRouteTable"
         },
         "SubnetId": {
           "Ref": "SvcsSubnet1"
@@ -1071,7 +1106,7 @@
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "RouteTableId": {
-          "Ref": "InternalRouteTable"
+          "Ref": "PrivateRouteTable"
         },
         "SubnetId": {
           "Ref": "SvcsSubnet2"
@@ -1082,10 +1117,21 @@
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "RouteTableId": {
-          "Ref": "InternalRouteTable"
+          "Ref": "PrivateRouteTable"
         },
         "SubnetId": {
           "Ref": "SvcsSubnet3"
+        }
+      }
+    },
+    "MainRouteTableEntry7": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PrivateRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "SingletonSubnet"
         }
       }
     },
@@ -1513,6 +1559,21 @@
     "SvcsSubnet3Cidr": {
       "Value": {
         "Ref": "109Svcs3Cidr"
+      }
+    },
+    "SingletonSubnetId": {
+      "Value": {
+        "Ref": "SingletonSubnet"
+      }
+    },
+    "SingletonSubnetAZ": {
+      "Value": {
+        "Fn::GetAtt": ["SingletonSubnet", "AvailabilityZone"]
+      }
+    },
+    "SingletonSubnetCidr": {
+      "Value": {
+        "Ref": "113SingletonCidr"
       }
     },
     "PcfRdsAddress": {
