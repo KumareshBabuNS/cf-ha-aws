@@ -1124,17 +1124,6 @@
         }
       }
     },
-    "MainRouteTableEntry7": {
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties": {
-        "RouteTableId": {
-          "Ref": "PrivateRouteTable"
-        },
-        "SubnetId": {
-          "Ref": "SingletonSubnet"
-        }
-      }
-    },
     "AppsRouteEntry1": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "DependsOn": "ngw1",
@@ -1168,6 +1157,17 @@
         },
         "SubnetId": {
           "Ref": "AppsSubnet3"
+        }
+      }
+    },
+    "AppsRouteEntry4": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "AppsRouteTable1"
+        },
+        "SubnetId": {
+          "Ref": "SingletonSubnet"
         }
       }
     },
