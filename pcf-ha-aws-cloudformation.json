@@ -74,7 +74,7 @@
     "07IamUserAccessKey": {
       "Type": "String",
       "Description": "Enter an existing IAM User Access Key to use for this installation (leave blank to create an IAM user)"
-    }
+    },
     "101Public1Cidr": {
       "Type": "String",
       "Default": "10.0.0.64/26",
