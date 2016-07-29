@@ -2,9 +2,14 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "PCF HA deployment topology",
   "Metadata": {
-    "version": "1.1.1"
+    "version": "1.2.0"
   },
   "Conditions": {
+    "CreateIamUser": {
+      "Fn::Equals": [{
+        "Ref": "07IamUserAccessKey"
+      }, ""]
+    },
     "CreateIgw": {
       "Fn::Equals": [{
         "Ref": "01IgwId"
@@ -66,6 +71,10 @@
       "Type": "String",
       "Description": "Enter a UUID for this deployment (use lower case letters)"
     },
+    "07IamUserAccessKey": {
+      "Type": "String",
+      "Description": "Enter an existing IAM User Access Key to use for this installation (leave blank to create an IAM user)"
+    }
     "101Public1Cidr": {
       "Type": "String",
       "Default": "10.0.0.64/26",
@@ -150,6 +159,7 @@
       }
     },
     "IamUser": {
+      "Condition": "CreateIamUser",
       "Type": "AWS::IAM::User",
       "Properties": {
         "Policies": [{
@@ -227,12 +237,13 @@
       }
     },
     "IamUserAccessKey": {
+      "Condition": "CreateIamUser",
       "Type": "AWS::IAM::AccessKey",
       "DependsOn": "IamUser",
       "Properties": {
         "UserName": {
-          "Ref": "IamUser"
-        }
+            "Ref": "IamUser"
+          }
       }
     },
     "PcfOpsManagerBucket": {
@@ -1437,16 +1448,19 @@
       }
     },
     "IamUserName": {
+      "Condition": "CreateIamUser",
       "Value": {
         "Ref": "IamUser"
       }
     },
     "IamUserAccessKey": {
+      "Condition": "CreateIamUser",
       "Value": {
         "Ref": "IamUserAccessKey"
       }
     },
     "IamUserSecretAccessKey": {
+      "Condition": "CreateIamUser",
       "Value": {
         "Fn::GetAtt": ["IamUserAccessKey", "SecretAccessKey"]
       }
