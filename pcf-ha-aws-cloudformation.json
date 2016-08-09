@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "PCF HA deployment topology",
   "Metadata": {
-    "version": "1.2.0"
+    "version": "1.2.1"
   },
   "Conditions": {
     "CreateIamUser": {
@@ -135,10 +135,10 @@
       "Default": "10.0.1.192/26",
       "Description": "Enter a CIDR subnet for RDS Subnet 3 (private)"
     },
-    "113SingletonCidr": {
+    "113BoshCidr": {
       "Type": "String",
       "Default": "10.0.2.0/23",
-      "Description": "Enter a CIDR subnet for the Singleton Subnet (private)"
+      "Description": "Enter a CIDR subnet for the BOSH director to be deployed to (private)"
     }
   },
   "Resources": {
@@ -496,11 +496,11 @@
         }]
       }
     },
-    "SingletonSubnet": {
+    "BoshSubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": {
-          "Ref": "113SingletonCidr"
+          "Ref": "113BoshCidr"
         },
         "AvailabilityZone": {
           "Fn::Select": ["0", {
@@ -1178,7 +1178,7 @@
           "Ref": "AppsRouteTable1"
         },
         "SubnetId": {
-          "Ref": "SingletonSubnet"
+          "Ref": "BoshSubnet"
         }
       }
     },
@@ -1575,19 +1575,19 @@
         "Ref": "109Svcs3Cidr"
       }
     },
-    "SingletonSubnetId": {
+    "BoshSubnetId": {
       "Value": {
-        "Ref": "SingletonSubnet"
+        "Ref": "BoshSubnet"
       }
     },
-    "SingletonSubnetAZ": {
+    "BoshSubnetAZ": {
       "Value": {
-        "Fn::GetAtt": ["SingletonSubnet", "AvailabilityZone"]
+        "Fn::GetAtt": ["BoshSubnet", "AvailabilityZone"]
       }
     },
-    "SingletonSubnetCidr": {
+    "BoshSubnetCidr": {
       "Value": {
-        "Ref": "113SingletonCidr"
+        "Ref": "113BoshCidr"
       }
     },
     "PcfRdsAddress": {
