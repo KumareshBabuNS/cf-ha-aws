@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "PCF HA deployment topology",
   "Metadata": {
-    "version": "1.2.1"
+    "version": "1.2.2"
   },
   "Conditions": {
     "CreateIamUser": {
@@ -521,7 +521,7 @@
         "Tags": [{
           "Key": "Name",
           "Value": {
-            "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "singleton-AZ-1" ] ]
+            "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "bosh-AZ-1" ] ]
           }
         }]
       }
@@ -1173,6 +1173,7 @@
     },
     "AppsRouteEntry4": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "DependsOn": "ngw1",
       "Properties": {
         "RouteTableId": {
           "Ref": "AppsRouteTable1"
