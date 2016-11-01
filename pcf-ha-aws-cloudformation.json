@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "PCF HA deployment topology",
   "Metadata": {
-    "version": "1.2.4"
+    "version": "1.2.5"
   },
   "Conditions": {
     "CreateIamUser": {
@@ -19,7 +19,7 @@
       "Fn::And": [{
         "Fn::Not": [{
           "Fn::Equals": [{
-            "Ref": "03RdsDBName"
+            "Ref": "03OpsManagerDBName"
           }, ""]
         }]
       }, {
@@ -55,9 +55,9 @@
       "Type": "String",
       "Description": "ARN for pre-uploaded SSL certificate"
     },
-    "03RdsDBName": {
+    "03OpsManagerDBName": {
       "Type": "String",
-      "Description": "RDS database to create for this deployment (leave blank to skip RDS creation)"
+      "Description": "Ops Manager database to create for this deployment (leave blank to skip RDS creation)"
     },
     "04RdsUsername": {
       "Type": "String",
@@ -1417,7 +1417,7 @@
         "EngineVersion": "5.6.27",
         "MultiAZ": "True",
         "DBName": {
-          "Ref": "03RdsDBName"
+          "Ref": "03OpsManagerDBName"
         },
         "Iops": "1000",
         "MasterUsername": {
@@ -1606,7 +1606,7 @@
     "PcfRdsDBName": {
       "Condition": "CreateRDS",
       "Value": {
-        "Ref": "03RdsDBName"
+        "Ref": "03OpsManagerDBName"
       }
     },
     "PcfVmsSecurityGroupId": {
