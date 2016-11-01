@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "PCF HA deployment topology",
   "Metadata": {
-    "version": "1.2.2"
+    "version": "1.2.3"
   },
   "Conditions": {
     "CreateIamUser": {
