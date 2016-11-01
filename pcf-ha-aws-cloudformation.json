@@ -35,7 +35,7 @@
           }, ""]
         }]
       }]
-    }
+    },
     "CreateVpc": {
       "Fn::Equals": [{
         "Ref": "00VpcId"
