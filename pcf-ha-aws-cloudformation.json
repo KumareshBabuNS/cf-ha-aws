@@ -35,7 +35,7 @@
           }, ""]
         }]
       }]
-    },
+    }
     "CreateVpc": {
       "Fn::Equals": [{
         "Ref": "00VpcId"
@@ -135,10 +135,10 @@
       "Default": "10.0.1.192/26",
       "Description": "Enter a CIDR subnet for RDS Subnet 3 (private)"
     },
-    "113BoshCidr": {
+    "113SingletonCidr": {
       "Type": "String",
       "Default": "10.0.2.0/23",
-      "Description": "Enter a CIDR subnet for the BOSH director to be deployed to (private)"
+      "Description": "Enter a CIDR subnet for singletons (e.g. the BOSH director) to be deployed to (private)"
     }
   },
   "Resources": {
@@ -496,11 +496,11 @@
         }]
       }
     },
-    "BoshSubnet": {
+    "SingletonSubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": {
-          "Ref": "113BoshCidr"
+          "Ref": "113SingletonCidr"
         },
         "AvailabilityZone": {
           "Fn::Select": ["0", {
@@ -521,7 +521,7 @@
         "Tags": [{
           "Key": "Name",
           "Value": {
-            "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "bosh-AZ-1" ] ]
+            "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "singleton-AZ-1" ] ]
           }
         }]
       }
@@ -1179,7 +1179,7 @@
           "Ref": "AppsRouteTable1"
         },
         "SubnetId": {
-          "Ref": "BoshSubnet"
+          "Ref": "SingletonSubnet"
         }
       }
     },
@@ -1576,19 +1576,19 @@
         "Ref": "109Svcs3Cidr"
       }
     },
-    "BoshSubnetId": {
+    "SingletonSubnetId": {
       "Value": {
-        "Ref": "BoshSubnet"
+        "Ref": "SingletonSubnet"
       }
     },
-    "BoshSubnetAZ": {
+    "SingletonSubnetAZ": {
       "Value": {
-        "Fn::GetAtt": ["BoshSubnet", "AvailabilityZone"]
+        "Fn::GetAtt": ["SingletonSubnet", "AvailabilityZone"]
       }
     },
-    "BoshSubnetCidr": {
+    "SingletonSubnetCidr": {
       "Value": {
-        "Ref": "113BoshCidr"
+        "Ref": "113SingletonCidr"
       }
     },
     "PcfRdsAddress": {
