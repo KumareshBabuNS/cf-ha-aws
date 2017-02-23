@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "PCF HA deployment topology",
   "Metadata": {
-    "version": "1.2.6"
+    "version": "1.2.7"
   },
   "Conditions": {
     "CreateIamUser": {
@@ -40,12 +40,23 @@
       "Fn::Equals": [{
         "Ref": "00VpcId"
       }, ""]
+    },
+    "CustomVpcCidr": {
+      "Fn::Not": [{
+        "Fn::Equals": [{
+          "Ref": "01aVpcCidr"
+        }, ""]
+      }]
     }
   },
   "Parameters": {
     "00VpcId": {
       "Type": "String",
       "Description": "Enter an existing VPC ID to be used for this deployment (leave blank to create a new VPC)"
+    },
+    "01aVpcCidr": {
+      "Type": "String",
+      "Description": "Enter a custom VPC CIDR block (leave blank for default of 10.0.0.0/16). **NOTE** If you entered an existing VPC ID, enter the CIDR block for that here."
     },
     "01IgwId": {
       "Type": "String",
@@ -146,7 +157,11 @@
       "Condition": "CreateVpc",
       "Type": "AWS::EC2::VPC",
       "Properties": {
-        "CidrBlock": "10.0.0.0/16",
+        "CidrBlock": {
+          "Fn::If": [
+            "CustomVpcCidr", { "Ref": "01aVpcCidr" }, "10.0.0.0/16"
+          ]
+        },
         "EnableDnsSupport": "true",
         "EnableDnsHostnames": "true",
         "InstanceTenancy": "default",
@@ -1383,17 +1398,29 @@
           "IpProtocol": "tcp",
           "FromPort": "22",
           "ToPort": "22",
-          "CidrIp": "10.0.0.0/16"
+          "CidrIp": {
+            "Fn::If": [
+              "CustomVpcCidr", { "Ref": "01aVpcCidr" }, "10.0.0.0/16"
+            ]
+          }
         }, {
           "IpProtocol": "tcp",
           "FromPort": "25555",
           "ToPort": "25555",
-          "CidrIp": "10.0.0.0/16"
+          "CidrIp": {
+            "Fn::If": [
+              "CustomVpcCidr", { "Ref": "01aVpcCidr" }, "10.0.0.0/16"
+            ]
+          }
         }, {
           "IpProtocol": "tcp",
           "FromPort": "6868",
           "ToPort": "6868",
-          "CidrIp": "10.0.0.0/16"
+          "CidrIp": {
+            "Fn::If": [
+              "CustomVpcCidr", { "Ref": "01aVpcCidr" }, "10.0.0.0/16"
+            ]
+          }
         }]
       }
     },
@@ -1412,7 +1439,11 @@
         },
         "SecurityGroupIngress": [{
           "IpProtocol": "-1",
-          "CidrIp": "10.0.0.0/16"
+          "CidrIp": {
+            "Fn::If": [
+              "CustomVpcCidr", { "Ref": "01aVpcCidr" }, "10.0.0.0/16"
+            ]
+          }
         }]
       }
     },
@@ -1434,7 +1465,11 @@
           "IpProtocol": "tcp",
           "FromPort": "3306",
           "ToPort": "3306",
-          "CidrIp": "10.0.0.0/16"
+          "CidrIp": {
+            "Fn::If": [
+              "CustomVpcCidr", { "Ref": "01aVpcCidr" }, "10.0.0.0/16"
+            ]
+          }
         }]
       }
     },
