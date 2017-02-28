@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "PCF HA deployment topology",
   "Metadata": {
-    "version": "2.0.0"
+    "version": "2.2.0"
   },
   "Conditions": {
     "CreateIamUser": {
@@ -66,21 +66,21 @@
     },
     "07IamUserAccessKey": {
       "Type": "String",
-      "Description": "Enter an existing IAM User Access Key to use for this installation (leave blank to create an IAM user)"
+      "Description": "Enter an existing IAM User Access Key ID to use for this installation (leave blank to create an IAM user)"
     },
     "101Public1Cidr": {
       "Type": "String",
-      "Default": "10.0.0.64/26",
+      "Default": "10.0.0.32/27",
       "Description": "Enter a CIDR subnet for Public Subnet 1 (internet-facing)"
     },
     "102Public2Cidr": {
       "Type": "String",
-      "Default": "10.0.0.128/26",
+      "Default": "10.0.0.64/27",
       "Description": "Enter a CIDR subnet for Public Subnet 2 (internet-facing)"
     },
     "103Public3Cidr": {
       "Type": "String",
-      "Default": "10.0.0.192/26",
+      "Default": "10.0.0.96/27",
       "Description": "Enter a CIDR subnet for Public Subnet 3 (internet-facing)"
     },
     "104App1Cidr": {
@@ -131,7 +131,12 @@
     "113SingletonCidr": {
       "Type": "String",
       "Default": "10.0.2.0/23",
-      "Description": "Enter a CIDR subnet for singletons (e.g. the BOSH director) to be deployed to (private)"
+      "Description": "Enter a CIDR subnet for Services singletons to be deployed to (private)"
+    },
+    "114BOSHCidr": {
+      "Type": "String",
+      "Default": "10.0.0.224/27",
+      "Description": "Enter a CIDR subnet for BOSH (NAT-ed)"
     }
   },
   "Resources": {
@@ -478,6 +483,30 @@
           "Key": "Name",
           "Value": {
             "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "apps-AZ-3" ] ]
+          }
+        }]
+      }
+    },
+    "BOSHSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "114BOSHCidr"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": ["0", {
+            "Fn::GetAZs": {
+              "Ref": "AWS::Region"
+            }
+          }]
+        },
+        "VpcId": {
+          "Ref": "PcfVpc"
+        },
+        "Tags": [{
+          "Key": "Name",
+          "Value": {
+            "Fn::Join": [ "-", [ { "Ref": "AWS::StackName" }, "bosh-AZ-1" ] ]
           }
         }]
       }
@@ -955,7 +984,7 @@
         }
       }
     },
-    "MainRouteTableEntry1": {
+    "PrivateRouteTableEntry1": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Condition": "CreateRDS",
       "Properties": {
@@ -967,7 +996,7 @@
         }
       }
     },
-    "MainRouteTableEntry2": {
+    "PrivateRouteTableEntry2": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Condition": "CreateRDS",
       "Properties": {
@@ -979,7 +1008,7 @@
         }
       }
     },
-    "MainRouteTableEntry3": {
+    "PrivateRouteTableEntry3": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Condition": "CreateRDS",
       "Properties": {
@@ -991,7 +1020,7 @@
         }
       }
     },
-    "MainRouteTableEntry4": {
+    "PrivateRouteTableEntry4": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "RouteTableId": {
@@ -1002,7 +1031,7 @@
         }
       }
     },
-    "MainRouteTableEntry5": {
+    "PrivateRouteTableEntry5": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "RouteTableId": {
@@ -1013,7 +1042,7 @@
         }
       }
     },
-    "MainRouteTableEntry6": {
+    "PrivateRouteTableEntry6": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "RouteTableId": {
@@ -1021,6 +1050,17 @@
         },
         "SubnetId": {
           "Ref": "SvcsSubnet3"
+        }
+      }
+    },
+    "PrivateRouteTableEntry7": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PrivateRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "SingletonSubnet"
         }
       }
     },
@@ -1068,7 +1108,7 @@
           "Ref": "AppsRouteTable1"
         },
         "SubnetId": {
-          "Ref": "SingletonSubnet"
+          "Ref": "BOSHSubnet"
         }
       }
     },
@@ -1414,6 +1454,21 @@
     "AppsSubnet3Cidr": {
       "Value": {
         "Ref": "106App3Cidr"
+      }
+    },
+    "BOSHSubnetId": {
+      "Value": {
+        "Ref": "BOSHSubnet"
+      }
+    },
+    "BOSHSubnetAZ": {
+      "Value": {
+        "Fn::GetAtt": ["BOSHSubnet", "AvailabilityZone"]
+      }
+    },
+    "BOSHSubnetCidr": {
+      "Value": {
+        "Ref": "114BOSHCidr"
       }
     },
     "SvcsSubnet1Id": {
