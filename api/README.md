@@ -54,7 +54,7 @@ curl -k "https://localhost/api/v0/staged/director/properties" \
 ```
 curl -k "https://localhost/api/v0/staged/director/availability_zones" \
     -X PUT \
-    -H "Authorization: Bearer UAA_ACCESS_TOKEN" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     -d @director-az-configuration.json
 ```
@@ -66,7 +66,7 @@ curl -k "https://localhost/api/v0/staged/director/availability_zones" \
 ```
 curl -k "https://localhost/api/v0/staged/director/networks" \
     -X PUT \
-    -H "Authorization: Bearer UAA_ACCESS_TOKEN" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     -d @director-networks-configuration.json
 ```
@@ -78,7 +78,7 @@ curl -k "https://localhost/api/v0/staged/director/networks" \
 ```
 curl -k "https://localhost/api/v0/staged/director/network_and_az" \
     -X PUT \
-    -H "Authorization: Bearer UAA_ACCESS_TOKEN" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     -d @director-network-az-configuration.json
 ```
@@ -90,7 +90,7 @@ curl -k "https://localhost/api/v0/staged/director/network_and_az" \
 ```
 curl -k "https://localhost/api/v0/staged/director/properties" \
     -X PUT \
-    -H "Authorization: Bearer UAA_ACCESS_TOKEN" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     -d @director-security-configuration.json
 ```
