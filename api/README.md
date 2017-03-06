@@ -1,6 +1,6 @@
 In this directory are a bunch of JSON files to help with automating Ops Manager Director configuration and deployment.
 
-Once you have applied all configurations, kick off the Director deployment with:
+Once you have applied all configurations, kick off the Director deployment (the following is the API equivalent of hitting 'apply changes' in the UI):
 
 ```
 curl -k "https://localhost/api/v0/installations" \
@@ -99,4 +99,26 @@ curl -k "https://localhost/api/v0/staged/director/properties" \
 
 ![](img/director-resource-configuration.png)
 
-`Sorry, you're outta luck`
+First, get the product `guid`:
+
+```
+curl -k "https://localhost/api/v0/staged/products" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN"
+```
+
+Then get the jobs for the product:
+
+```
+curl -k "https://localhost/api/v0/staged/products/:product_guid/jobs" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN"
+```
+
+Finally, use the *job* `guid` along with the product guid to configure resource configuration for the job/s... in this example, the compilation job:
+
+```
+curl -k "https://localhost/api/v0/staged/products/:product_guid/jobs/:job_guid/resource_config" \
+    -X PUT \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN"
+    -H "Content-Type: application/json" \
+    -d @director-compilation-resource-configuration.json
+```
