@@ -1,6 +1,6 @@
-In this directory are a bunch of JSON files to help with automating Ops Manager Director configuration and deployment.
+In this directory are a bunch of JSON files to help with automating PCF configuration and deployment via the Ops Manager API.
 
-Once you have applied all configurations, kick off the Director deployment (the following is the API equivalent of hitting 'apply changes' in the UI):
+Once you have applied a configuration, kick off the deployment with the following (which is the API equivalent of hitting 'apply changes' in the UI):
 
 ```
 curl -k "https://localhost/api/v0/installations" \
@@ -17,9 +17,11 @@ curl -k "https://localhost/api/v0/installations/:id" \
     -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
 ```
 
-**Examples**
+# Examples
 
 Note that these all assume you are running `curl` from the Ops Manager VM.
+
+## Ops Manager Director
 
 - Automate 'AWS Config' page
 
@@ -122,3 +124,84 @@ curl -k "https://localhost/api/v0/staged/products/:product_guid/jobs/:job_guid/r
     -H "Content-Type: application/json" \
     -d @director-compilation-resource-configuration.json
 ```
+
+## Elastic Runtime Tile
+
+The bulk of tile configuration is done via 'properties' data structures, but there are a few common parts of any tile such as the network and az configuration, stemcell, errands and job resource configuration. So although these examples are for ERT, they pretty much apply to any tile.
+
+The first thing to do is upload the product:
+
+```
+curl -k "https://localhost/api/v0/available_products" \
+    -X POST \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
+    -F 'product[file]=@/path/to/product.zip'
+```
+
+Then get the product `name` and `product_version` of the uploaded product:
+
+```
+curl -k "https://localhost/api/v0/available_products" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN"
+```
+
+Finally stage it (in this example, Elastic Runtime 1.9.8):
+
+```
+curl -k "https://localhost/api/v0/staged/products" \
+    -X POST \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{"name": "cf", "product_version": "1.9.8-build.3"}'
+```
+
+To do anything useful, you'll need the product `guid`
+
+get the product `guid`:
+
+```
+curl -k "https://localhost/api/v0/staged/products" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN"
+```
+
+- Configure Networks and AZs
+
+![](img/ert-network-az-configuration.png)
+
+```
+curl -k "https://localhost/api/v0/staged/products/:product_guid/networks_and_azs" \
+    -X PUT \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d @ert-network-az-configuration.json
+```
+
+- Configure Properties
+
+There are many properties to configure for ERT, too many to go through here. They are all generically the same however, so a single example should point the way for everything. If in doubt, have a look at the API documentation available at `https://<opsmgr_url>/docs`. Here is how to configure the Apps and System domains:
+
+![](img/ert-domains-configuration.png)
+
+```
+curl -k "https://localhost/api/v0/staged/products/:product_guid/properties" \
+    -X PUT \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d @ert-domains-configuration.json
+```
+
+- Configure Errands
+
+![](img/ert-errands-configuration.png)
+
+```
+curl -k "https://localhost/api/v0/staged/products/:product_guid/errands" \
+    -X PUT \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d @ert-errands-configuration.json
+```
+
+- Configure Job Resources
+
+Already covered at the end of the [Ops Manager Director](#Ops-Manager-Director) section.
