@@ -204,4 +204,76 @@ curl -k "https://localhost/api/v0/staged/products/:product_guid/errands" \
 
 - Configure Job Resources
 
-Already covered at the end of the [Ops Manager Director](#Ops-Manager-Director) section.
+Already covered at the end of the [Ops Manager Director](#Ops-Manager-Director) section. The list of Elastic Runtime jobs is as follows (remember, you need the job `guid` to configure resources, not just the name... which is obviously unique per-install, I have omitted it below):
+
+```
+{
+  "jobs": [{
+    "name": "consul_server"
+  }, {
+    "name": "nats"
+  }, {
+    "name": "etcd_tls_server"
+  }, {
+    "name": "etcd_server"
+  }, {
+    "name": "nfs_server"
+  }, {
+    "name": "mysql_proxy"
+  }, {
+    "name": "mysql"
+  }, {
+    "name": "backup-prepare"
+  }, {
+    "name": "ccdb"
+  }, {
+    "name": "uaadb"
+  }, {
+    "name": "uaa"
+  }, {
+    "name": "cloud_controller"
+  }, {
+    "name": "ha_proxy"
+  }, {
+    "name": "router"
+  }, {
+    "name": "mysql_monitor"
+  }, {
+    "name": "clock_global"
+  }, {
+    "name": "cloud_controller_worker"
+  }, {
+    "name": "diego_database"
+  }, {
+    "name": "diego_brain"
+  }, {
+    "name": "diego_cell"
+  }, {
+    "name": "doppler"
+  }, {
+    "name": "loggregator_trafficcontroller"
+  }, {
+    "name": "tcp_router"
+  }, {
+    "name": "push-apps-manager"
+  }, {
+    "name": "smoke-tests"
+  }, {
+    "name": "notifications"
+  }, {
+    "name": "notifications-ui"
+  }, {
+    "name": "autoscaling"
+  }, {
+    "name": "autoscaling-register-broker"
+  }, {
+    "name": "autoscaling-destroy-broker"
+  }, {
+    "name": "bootstrap"
+  }, {
+    "name": "push-pivotal-account"
+  }, {
+    "name": "mysql-rejoin-unsafe"
+  }]
+}
+```
