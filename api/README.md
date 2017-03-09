@@ -178,7 +178,9 @@ curl -k "https://localhost/api/v0/staged/products/:product_guid/networks_and_azs
 
 - Configure Properties
 
-There are many properties to configure for ERT, too many to go through here. They are all generically the same however, so a single example should point the way for everything. If in doubt, have a look at the API documentation available at `https://<opsmgr_url>/docs`. Here is how to configure the Apps and System domains:
+There are many properties to configure for ERT, too many to go through here. They are all generically the same however, so a single example should point the way for everything. If in doubt, have a look at the API documentation available at `https://<opsmgr_url>/docs`.
+
+Here is how to configure the Apps and System domains:
 
 ![](img/ert-domains-configuration.png)
 
@@ -189,6 +191,19 @@ curl -k "https://localhost/api/v0/staged/products/:product_guid/properties" \
     -H "Content-Type: application/json" \
     -d @ert-domains-configuration.json
 ```
+
+Here is how to configure File Storage (note that anytime a property is of type `secret`, the value must be an object with a key 'secret'):
+
+![](img/ert-file=storage-configuration.png)
+
+```
+curl -k "https://localhost/api/v0/staged/products/:product_guid/properties" \
+    -X PUT \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d @ert-file-storage-configuration.json
+```
+
 
 - Configure Errands
 
@@ -254,26 +269,6 @@ Already covered at the end of the [Ops Manager Director](#Ops-Manager-Director) 
     "name": "loggregator_trafficcontroller"
   }, {
     "name": "tcp_router"
-  }, {
-    "name": "push-apps-manager"
-  }, {
-    "name": "smoke-tests"
-  }, {
-    "name": "notifications"
-  }, {
-    "name": "notifications-ui"
-  }, {
-    "name": "autoscaling"
-  }, {
-    "name": "autoscaling-register-broker"
-  }, {
-    "name": "autoscaling-destroy-broker"
-  }, {
-    "name": "bootstrap"
-  }, {
-    "name": "push-pivotal-account"
-  }, {
-    "name": "mysql-rejoin-unsafe"
   }]
 }
 ```
