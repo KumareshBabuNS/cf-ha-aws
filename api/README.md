@@ -14,7 +14,7 @@ You'll get back something like `{"install":{"id":1}}`, which you can then poll f
 
 ```
 curl -k "https://localhost/api/v0/installations/:id" \
-    -H "Authorization: Bearer $UAA_ACCESS_TOKEN" \
+    -H "Authorization: Bearer $UAA_ACCESS_TOKEN"
 ```
 
 # Examples
@@ -192,7 +192,7 @@ curl -k "https://localhost/api/v0/staged/products/:product_guid/properties" \
     -d @ert-domains-configuration.json
 ```
 
-Here is how to configure File Storage (note that anytime a property is of type `secret`, the value must be an object with a key 'secret'):
+Here is how to configure File Storage (note that whenever a property is of type `secret`, the value must be an object with a key 'secret'):
 
 ![](img/ert-file-storage-configuration.png)
 
