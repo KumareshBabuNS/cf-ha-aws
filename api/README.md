@@ -194,7 +194,7 @@ curl -k "https://localhost/api/v0/staged/products/:product_guid/properties" \
 
 Here is how to configure File Storage (note that anytime a property is of type `secret`, the value must be an object with a key 'secret'):
 
-![](img/ert-file=storage-configuration.png)
+![](img/ert-file-storage-configuration.png)
 
 ```
 curl -k "https://localhost/api/v0/staged/products/:product_guid/properties" \
