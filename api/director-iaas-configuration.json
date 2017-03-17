@@ -1,6 +1,6 @@
 {
   "iaas_configuration": {
-    "access_key_id": "example-access-key",
+    "access_key_id": "example-aws-access-key",
     "secret_access_key": "example-aws-secret-key",
     "vpc_id": "my-vpc",
     "security_group": "example-security-group",

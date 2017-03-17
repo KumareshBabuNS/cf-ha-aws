@@ -6,6 +6,8 @@
     "s3_blobstore_options": {
       "endpoint": "https://s3-example-region-1.amazonaws.com",
       "bucket_name": "example-bucket-name",
+      "access_key": "example-aws-access-key",
+      "secret_key": "example-aws-secret-key",
       "signature_version": "4",
       "region": "example-region-1"
     },
@@ -13,8 +15,9 @@
     "external_database_options": {
       "host": "example-mysql-host",
       "port": "3306",
+      "database": "example-database",
       "user": "example-user",
-      "database": "example-password"
+      "password": "example-password"
     },
   }
 }
